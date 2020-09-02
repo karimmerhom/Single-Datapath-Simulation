@@ -1,0 +1,268 @@
+import java.util.Vector;
+
+
+public class Test {
+
+	public static void main (String[]args)
+	{
+		
+		InstructionMemory instMem = new InstructionMemory() ;
+		Vector<String> instructions = new Vector<String>();
+		instructions.add("10001110011010000000000000000011");
+		instMem.LoadInstructions(instructions);
+		Instruction_Fetch instF = new Instruction_Fetch(instMem);
+		Instruction_Decode instDecode = new Instruction_Decode(instMem);
+		Register_File rdF = new Register_File();
+		rdF.Registers[19]= "00000000000000000000000000000101";
+		Vector<String> DecodeResult = instDecode.InstDecode(instF.InstFetch(instMem.programCounter), instMem.programCounter);
+		System.out.println("ConUnit: " + DecodeResult.elementAt(0) );
+		String ALUop = DecodeResult.elementAt(0).substring(0,2);
+		String ALUSrc = DecodeResult.elementAt(0).substring(3,4);
+		String MemRead =DecodeResult.elementAt(0).substring(5,6);
+		String MemWrite = DecodeResult.elementAt(0).substring(6,7);
+		String Branch = DecodeResult.elementAt(0).substring(7,8);
+		String MemtoReg = DecodeResult.elementAt(0).substring(8,9);
+		String RegDst = DecodeResult.elementAt(0).substring(2,3);
+		String func = DecodeResult.elementAt(6);
+		Execute executeInst = new Execute();
+		Vector<String> ExecuteResult = executeInst.Execute(ALUop, ALUSrc, DecodeResult.elementAt(1),DecodeResult.elementAt(2), DecodeResult.elementAt(7),DecodeResult.elementAt(3), func , instMem);
+		String aluresult = ExecuteResult.elementAt(0);
+		String flagz = ExecuteResult.elementAt(1);
+		String BranchResult = ExecuteResult.elementAt(2);
+		String readData2 = ExecuteResult.elementAt(3);
+		String pc = ExecuteResult.elementAt(4);
+		Mem_Access memaccess = new Mem_Access() ;
+		Vector<String> datamem = new Vector<String>();
+		datamem.add(0, "00000000000000000000000000000101");
+		datamem.add(1, "00000000000000000000000000000101");
+		datamem.add(2, "00000000000000000000000000000101");
+		datamem.add(3, "00000000000000000000000000000101");
+		datamem.add(4, "00000000000000000000000000000101");
+		datamem.add(5, "00000000000000000000000000000101");
+		datamem.add(6, "00000000000000000000000000000101");
+		datamem.add(7, "00000000000000000000000000000101");
+		datamem.add(8, "00000000000000000000000000000101");
+		memaccess.setMemory(datamem);
+		Vector<String> memaccessResult = memaccess.MemAccess(aluresult, readData2,DecodeResult.elementAt(7), flagz, BranchResult, MemWrite, MemRead, Branch);
+		String ReadData2 = memaccessResult.elementAt(1);
+		String aluresultmemacc = memaccessResult.elementAt(0);
+		Write_Back writeBack = new Write_Back() ;
+		String writeBackresult = writeBack.WriteBack(aluresultmemacc,ReadData2,MemtoReg, RegDst, DecodeResult.elementAt(4),DecodeResult.elementAt(5), rdF , datamem);
+		System.out.println(writeBackresult);
+		System.out.println(rdF.Registers[8]);
+		System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+		
+		instructions.add("10101110011010000000000000000011");
+		instMem.LoadInstructions(instructions);
+		rdF.Registers[19]= "00000000000000000000000000000111";
+		Vector<String> DecodeResult1 = instDecode.InstDecode(instF.InstFetch(instMem.programCounter), instMem.programCounter);
+		System.out.println("ConUnit: " + DecodeResult1.elementAt(0) );
+		String ALUop1 = DecodeResult1.elementAt(0).substring(0,2);
+		String ALUSrc1 = DecodeResult1.elementAt(0).substring(3,4);
+		String MemRead1 =DecodeResult1.elementAt(0).substring(5,6);
+		String MemWrite1 = DecodeResult1.elementAt(0).substring(6,7);
+		String Branch1 = DecodeResult1.elementAt(0).substring(7,8);
+		String MemtoReg1 = DecodeResult1.elementAt(0).substring(8,9);
+		String RegDst1 = DecodeResult1.elementAt(0).substring(2,3);
+		String func1 = DecodeResult1.elementAt(6);
+		Vector<String> ExecuteResult1 = executeInst.Execute(ALUop1, ALUSrc1, DecodeResult1.elementAt(1),DecodeResult1.elementAt(2), DecodeResult1.elementAt(7),DecodeResult1.elementAt(3), func1 , instMem);
+		String aluresult1 = ExecuteResult1.elementAt(0);
+		String flagz1 = ExecuteResult1.elementAt(1);
+		String BranchResult1 = ExecuteResult1.elementAt(2);
+		String readData21 = ExecuteResult1.elementAt(3);
+		String pc1 = ExecuteResult1.elementAt(4);
+		datamem.add(0, "00000000000000000000000000000000");
+		datamem.add(1, "00000000000000000000000000000000");
+		datamem.add(2, "00000000000000000000000000000000");
+		datamem.add(3, "00000000000000000000000000000000");
+		datamem.add(4, "00000000000000000000000000000000");
+		datamem.add(5, "00000000000000000000000000000000");
+		datamem.add(6, "00000000000000000000000000000000");
+		datamem.add(7, "00000000000000000000000000000000");
+		datamem.add(8, "00000000000000000000000000000000");
+		memaccess.setMemory(datamem);
+		Vector<String> memaccessResult1 = memaccess.MemAccess(aluresult1, readData21,DecodeResult1.elementAt(7), flagz1, BranchResult1, MemWrite1, MemRead1, Branch1);
+		String ReadData21 = memaccessResult1.elementAt(1);
+		String aluresultmemacc1 = memaccessResult1.elementAt(0);
+		String writeBackresult1 = writeBack.WriteBack(aluresultmemacc1,ReadData21,MemtoReg1, RegDst1, DecodeResult1.elementAt(4),DecodeResult1.elementAt(5), rdF , datamem);
+		System.out.println(writeBackresult1);
+		System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+		instructions.add("00000010001100100100000000100000");
+		instMem.LoadInstructions(instructions);
+		rdF.Registers[17]= "00000000000000000000000000000001";
+		rdF.Registers[18]= "00000000000000000000000000000011";
+		Vector<String> DecodeResult11 = instDecode.InstDecode(instF.InstFetch(instMem.programCounter), instMem.programCounter);
+		System.out.println("ConUnit: " + DecodeResult11.elementAt(0) );
+		String ALUop11 = DecodeResult11.elementAt(0).substring(0,2);
+		String ALUSrc11 = DecodeResult11.elementAt(0).substring(3,4);
+		String MemRead11 =DecodeResult11.elementAt(0).substring(5,6);
+		String MemWrite11 = DecodeResult11.elementAt(0).substring(6,7);
+		String Branch11 = DecodeResult11.elementAt(0).substring(7,8);
+		String MemtoReg11 = DecodeResult11.elementAt(0).substring(8,9);
+		String RegDst11 = DecodeResult11.elementAt(0).substring(2,3);
+		String func11 = DecodeResult11.elementAt(6);
+		Vector<String> ExecuteResult11 = executeInst.Execute(ALUop11, ALUSrc11, DecodeResult11.elementAt(1),DecodeResult11.elementAt(2), DecodeResult11.elementAt(7),DecodeResult11.elementAt(3), func11 , instMem);
+		String aluresult11 = ExecuteResult11.elementAt(0);
+		String flagz11 = ExecuteResult11.elementAt(1);
+		String BranchResult11 = ExecuteResult11.elementAt(2);
+		String readData211 = ExecuteResult11.elementAt(3);
+		String pc11 = ExecuteResult11.elementAt(4);
+		
+		Vector<String> memaccessResult11 = memaccess.MemAccess(aluresult11, readData211,DecodeResult11.elementAt(7), flagz11, BranchResult11, MemWrite11, MemRead11, Branch11);
+		String ReadData211 = memaccessResult11.elementAt(1);
+		String aluresultmemacc11 = memaccessResult11.elementAt(0);
+		String writeBackresult11 = writeBack.WriteBack(aluresultmemacc11,ReadData211,MemtoReg11, RegDst11, DecodeResult11.elementAt(4),DecodeResult11.elementAt(5), rdF , datamem);
+		System.out.println(writeBackresult11);
+		System.out.println(rdF.Registers[8]);
+		System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+		
+		instructions.add("00000010001100100100000000100010");
+		instMem.LoadInstructions(instructions);
+		rdF.Registers[17]= "00000000000000000000000000000011";
+		rdF.Registers[18]= "00000000000000000000000000000001";
+		Vector<String> DecodeResult111 = instDecode.InstDecode(instF.InstFetch(instMem.programCounter), instMem.programCounter);
+		System.out.println("ConUnit: " + DecodeResult111.elementAt(0) );
+		String ALUop111 = DecodeResult111.elementAt(0).substring(0,2);
+		String ALUSrc111 = DecodeResult111.elementAt(0).substring(3,4);
+		String MemRead111 =DecodeResult111.elementAt(0).substring(5,6);
+		String MemWrite111 = DecodeResult111.elementAt(0).substring(6,7);
+		String Branch111 = DecodeResult111.elementAt(0).substring(7,8);
+		String MemtoReg111 = DecodeResult111.elementAt(0).substring(8,9);
+		String RegDst111 = DecodeResult111.elementAt(0).substring(2,3);
+		String func111 = DecodeResult111.elementAt(6);
+		Vector<String> ExecuteResult111 = executeInst.Execute(ALUop111, ALUSrc111, DecodeResult111.elementAt(1),DecodeResult111.elementAt(2), DecodeResult111.elementAt(7),DecodeResult111.elementAt(3), func111 , instMem);
+		String aluresult111 = ExecuteResult111.elementAt(0);
+		String flagz111 = ExecuteResult111.elementAt(1);
+		String BranchResult111 = ExecuteResult111.elementAt(2);
+		String readData2111 = ExecuteResult111.elementAt(3);
+		String pc111 = ExecuteResult111.elementAt(4);
+		
+		Vector<String> memaccessResult111 = memaccess.MemAccess(aluresult111, readData2111,DecodeResult111.elementAt(7), flagz111, BranchResult111, MemWrite111, MemRead111, Branch111);
+		String ReadData2111 = memaccessResult111.elementAt(1);
+		String aluresultmemacc111 = memaccessResult111.elementAt(0);
+		String writeBackresult111 = writeBack.WriteBack(aluresultmemacc111,ReadData2111,MemtoReg111, RegDst111, DecodeResult111.elementAt(4),DecodeResult111.elementAt(5), rdF , datamem);
+		System.out.println(writeBackresult111);
+		System.out.println(rdF.Registers[8]);
+		System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+		
+		instructions.add("00000010001100100100000000100100");
+		instMem.LoadInstructions(instructions);
+		rdF.Registers[17]= "00000000000000000000000000000011";
+		rdF.Registers[18]= "00000000000000000000000000000001";
+		Vector<String> DecodeResult1111 = instDecode.InstDecode(instF.InstFetch(instMem.programCounter), instMem.programCounter);
+		System.out.println("ConUnit: " + DecodeResult111.elementAt(0) );
+		String ALUop1111 = DecodeResult1111.elementAt(0).substring(0,2);
+		String ALUSrc1111 = DecodeResult1111.elementAt(0).substring(3,4);
+		String MemRead1111 =DecodeResult1111.elementAt(0).substring(5,6);
+		String MemWrite1111 = DecodeResult1111.elementAt(0).substring(6,7);
+		String Branch1111 = DecodeResult1111.elementAt(0).substring(7,8);
+		String MemtoReg1111 = DecodeResult1111.elementAt(0).substring(8,9);
+		String RegDst1111 = DecodeResult1111.elementAt(0).substring(2,3);
+		String func1111 = DecodeResult1111.elementAt(6);
+		Vector<String> ExecuteResult1111 = executeInst.Execute(ALUop1111, ALUSrc1111, DecodeResult1111.elementAt(1),DecodeResult1111.elementAt(2), DecodeResult1111.elementAt(7),DecodeResult1111.elementAt(3), func1111 , instMem);
+		String aluresult1111 = ExecuteResult1111.elementAt(0);
+		String flagz1111 = ExecuteResult1111.elementAt(1);
+		String BranchResult1111 = ExecuteResult1111.elementAt(2);
+		String readData21111 = ExecuteResult1111.elementAt(3);
+		String pc1111 = ExecuteResult1111.elementAt(4);
+		
+		Vector<String> memaccessResult1111 = memaccess.MemAccess(aluresult1111, readData21111,DecodeResult1111.elementAt(7), flagz1111, BranchResult1111, MemWrite1111, MemRead1111, Branch1111);
+		String ReadData21111 = memaccessResult1111.elementAt(1);
+		String aluresultmemacc1111 = memaccessResult1111.elementAt(0);
+		String writeBackresult1111 = writeBack.WriteBack(aluresultmemacc1111,ReadData21111,MemtoReg1111, RegDst1111, DecodeResult1111.elementAt(4),DecodeResult1111.elementAt(5), rdF , datamem);
+		System.out.println(writeBackresult1111);
+		System.out.println(rdF.Registers[8]);
+		System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+		
+		instructions.add("00000010001100100100000000100101");
+		instMem.LoadInstructions(instructions);
+		rdF.Registers[17]= "00000000000000000000000000000011";
+		rdF.Registers[18]= "00000000000000000000000000000001";
+		Vector<String> DecodeResult11111 = instDecode.InstDecode(instF.InstFetch(instMem.programCounter), instMem.programCounter);
+		System.out.println("ConUnit: " + DecodeResult111.elementAt(0) );
+		String ALUop11111 = DecodeResult11111.elementAt(0).substring(0,2);
+		String ALUSrc11111 = DecodeResult11111.elementAt(0).substring(3,4);
+		String MemRead11111 =DecodeResult11111.elementAt(0).substring(5,6);
+		String MemWrite11111 = DecodeResult11111.elementAt(0).substring(6,7);
+		String Branch11111 = DecodeResult11111.elementAt(0).substring(7,8);
+		String MemtoReg11111 = DecodeResult11111.elementAt(0).substring(8,9);
+		String RegDst11111 = DecodeResult11111.elementAt(0).substring(2,3);
+		String func11111 = DecodeResult11111.elementAt(6);
+		Vector<String> ExecuteResult11111 = executeInst.Execute(ALUop11111, ALUSrc11111, DecodeResult11111.elementAt(1),DecodeResult11111.elementAt(2), DecodeResult11111.elementAt(7),DecodeResult11111.elementAt(3), func11111 , instMem);
+		String aluresult11111 = ExecuteResult11111.elementAt(0);
+		String flagz11111 = ExecuteResult11111.elementAt(1);
+		String BranchResult11111 = ExecuteResult11111.elementAt(2);
+		String readData211111 = ExecuteResult11111.elementAt(3);
+		String pc11111 = ExecuteResult11111.elementAt(4);
+		
+		Vector<String> memaccessResult11111 = memaccess.MemAccess(aluresult11111, readData211111,DecodeResult11111.elementAt(7), flagz11111, BranchResult11111, MemWrite11111, MemRead11111, Branch11111);
+		String ReadData211111 = memaccessResult11111.elementAt(1);
+		String aluresultmemacc11111 = memaccessResult11111.elementAt(0);
+		String writeBackresult11111 = writeBack.WriteBack(aluresultmemacc11111,ReadData211111,MemtoReg11111, RegDst11111, DecodeResult11111.elementAt(4),DecodeResult11111.elementAt(5), rdF , datamem);
+		System.out.println(writeBackresult11111);
+		System.out.println(rdF.Registers[8]);
+		System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+		
+
+		instructions.add("00000010001100100100000000101010");
+		instMem.LoadInstructions(instructions);
+		rdF.Registers[17]= "00000000000000000000000000000001";
+		rdF.Registers[18]= "00000000000000000000000000000011";
+		Vector<String> DecodeResult111111 = instDecode.InstDecode(instF.InstFetch(instMem.programCounter), instMem.programCounter);
+		System.out.println("ConUnit: " + DecodeResult111111.elementAt(0) );
+		String ALUop111111 = DecodeResult111111.elementAt(0).substring(0,2);
+		String ALUSrc111111 = DecodeResult111111.elementAt(0).substring(3,4);
+		String MemRead111111 =DecodeResult111111.elementAt(0).substring(5,6);
+		String MemWrite111111 = DecodeResult111111.elementAt(0).substring(6,7);
+		String Branch111111 = DecodeResult111111.elementAt(0).substring(7,8);
+		String MemtoReg111111 = DecodeResult111111.elementAt(0).substring(8,9);
+		String RegDst111111 = DecodeResult111111.elementAt(0).substring(2,3);
+		String func111111 = DecodeResult111111.elementAt(6);
+		Vector<String> ExecuteResult111111 = executeInst.Execute(ALUop111111, ALUSrc111111, DecodeResult111111.elementAt(1),DecodeResult111111.elementAt(2), DecodeResult111111.elementAt(7),DecodeResult111111.elementAt(3), func111111 , instMem);
+		String aluresult111111 = ExecuteResult111111.elementAt(0);
+		String flagz111111 = ExecuteResult111111.elementAt(1);
+		String BranchResult111111 = ExecuteResult111111.elementAt(2);
+		String readData2111111 = ExecuteResult111111.elementAt(3);
+		String pc111111 = ExecuteResult111111.elementAt(4);
+		
+		Vector<String> memaccessResult111111 = memaccess.MemAccess(aluresult111111, readData2111111,DecodeResult111111.elementAt(7), flagz111111, BranchResult111111, MemWrite111111, MemRead111111, Branch111111);
+		String ReadData2111111 = memaccessResult111111.elementAt(1);
+		String aluresultmemacc111111 = memaccessResult111111.elementAt(0);
+		String writeBackresult111111 = writeBack.WriteBack(aluresultmemacc111111,ReadData2111111,MemtoReg111111, RegDst111111, DecodeResult111111.elementAt(4),DecodeResult111111.elementAt(5), rdF , datamem);
+		System.out.println(writeBackresult111111);
+		System.out.println(rdF.Registers[8]);
+		System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+		
+		instructions.add("00010010001100010000000000000011");
+		instMem.LoadInstructions(instructions);
+		rdF.Registers[17]= "00000000000000000000000000000011";
+		rdF.Registers[18]= "00000000000000000000000000000011";
+				
+		Vector<String> DecodeResult1111111 = instDecode.InstDecode(instF.InstFetch(instMem.programCounter), instMem.programCounter);
+		System.out.println("ConUnit: " + DecodeResult1111111.elementAt(0) );
+		String ALUop1111111 = DecodeResult1111111.elementAt(0).substring(0,2);
+		String ALUSrc1111111 = DecodeResult1111111.elementAt(0).substring(3,4);
+		String MemRead1111111 =DecodeResult1111111.elementAt(0).substring(5,6);
+		String MemWrite1111111 = DecodeResult1111111.elementAt(0).substring(6,7);
+		String Branch1111111 = DecodeResult1111111.elementAt(0).substring(7,8);
+		String MemtoReg1111111 = DecodeResult1111111.elementAt(0).substring(8,9);
+		String RegDst1111111 = DecodeResult1111111.elementAt(0).substring(2,3);
+		String func1111111 = DecodeResult1111111.elementAt(6);
+		Vector<String> ExecuteResult1111111 = executeInst.Execute(ALUop1111111, ALUSrc1111111, DecodeResult1111111.elementAt(1),DecodeResult1111111.elementAt(2), DecodeResult1111111.elementAt(7),DecodeResult1111111.elementAt(3), func1111111 , instMem);
+		String aluresult1111111 = ExecuteResult1111111.elementAt(0);
+		String flagz1111111 = ExecuteResult1111111.elementAt(1);
+		String BranchResult1111111 = ExecuteResult1111111.elementAt(2);
+		String readData21111111 = ExecuteResult1111111.elementAt(3);
+		String pc1111111 = ExecuteResult1111111.elementAt(4);
+		
+		Vector<String> memaccessResult1111111 = memaccess.MemAccess(aluresult1111111, readData21111111,DecodeResult1111111.elementAt(7), flagz1111111, BranchResult1111111, MemWrite1111111, MemRead1111111, Branch1111111);
+		String ReadData21111111 = memaccessResult1111111.elementAt(1);
+		String aluresultmemacc1111111 = memaccessResult1111111.elementAt(0);
+		String writeBackresult1111111 = writeBack.WriteBack(aluresultmemacc1111111,ReadData21111111,MemtoReg1111111, RegDst1111111, DecodeResult1111111.elementAt(4),DecodeResult1111111.elementAt(5), rdF , datamem);
+		System.out.println(writeBackresult1111111);
+	//	System.out.println(rdF.Registers[8]);
+		System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+	} 
+	
+}
